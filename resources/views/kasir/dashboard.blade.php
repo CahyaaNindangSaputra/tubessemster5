@@ -71,9 +71,14 @@
                 <h4 class="fw-bold" style="color: var(--primary-color); letter-spacing: -1px; font-size: 1.8rem;">RIEL'S<span style="color: var(--text-dark)">COFFEE</span></h4>
                 <p class="text-muted small">Sistem Kasir Pintar</p>
             </div>
+            
             <div class="nav flex-column nav-pills nav-sidebar" id="v-pills-tab" role="tablist">
-                <button class="nav-link active" id="nav-pos-tab" data-bs-toggle="pill" data-bs-target="#nav-pos"><i class="bi bi-grid-1x2-fill me-3"></i> Monitor Pesanan</button>
-                <button class="nav-link" id="nav-menu-tab" data-bs-toggle="pill" data-bs-target="#nav-menu"><i class="bi bi-cup-hot-fill me-3"></i> Kelola Menu</button>
+                <button class="nav-link active" id="nav-pos-tab" data-bs-toggle="pill" data-bs-target="#nav-pos" type="button">
+                    <i class="bi bi-grid-1x2-fill me-3"></i> Monitor Pesanan
+                </button>
+                <button class="nav-link" id="nav-menu-tab" data-bs-toggle="pill" data-bs-target="#nav-menu" type="button">
+                    <i class="bi bi-cup-hot-fill me-3"></i> Kelola Menu
+                </button>
             </div>
         </div>
     </div>
@@ -83,18 +88,45 @@
             
             <div class="tab-pane fade show active" id="nav-pos">
                 <div class="d-flex justify-content-between align-items-end mb-5">
-                    <div><h1 class="fw-bold mb-2">Dashboard Kasir</h1><p class="text-muted mb-0 fs-5">Monitor aktivitas meja dan pesanan.</p></div>
+                    <div>
+                        <h1 class="fw-bold mb-2" style="color: var(--text-dark);">Dashboard Kasir</h1>
+                        <p class="text-muted mb-0 fs-5">Monitor aktivitas meja dan pesanan restoran secara real-time.</p>
+                    </div>
                     <div class="bg-white px-4 py-2 rounded-pill shadow-sm border d-flex align-items-center">
                         <small class="text-muted fw-bold fs-6"><i class="bi bi-calendar-event me-2"></i> {{ date('d M Y') }}</small>
-                        <button onclick="window.location.reload()" class="btn btn-sm btn-light rounded-circle ms-3 shadow-sm border"><i class="bi bi-arrow-clockwise fs-6"></i></button>
+                        <button onclick="window.location.reload()" class="btn btn-sm btn-light rounded-circle ms-3 shadow-sm border" title="Refresh Data"><i class="bi bi-arrow-clockwise fs-6"></i></button>
                     </div>
                 </div>
 
                 <div class="row mb-5 g-4">
-                    <div class="col-md-3"><div class="card summary-card bg-white p-4 h-100"><div class="summary-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-receipt"></i></div><div class="summary-title">Total Pesanan</div><div class="summary-value">{{ $riwayatSelesai->count() + count($menungguBayar) + count($sedangProses) }}</div></div></div>
-                    <div class="col-md-3"><div class="card summary-card bg-white p-4 h-100"><div class="summary-icon bg-success bg-opacity-10 text-success"><i class="bi bi-cash-stack"></i></div><div class="summary-title">Omset Hari Ini</div><div class="summary-value">Rp {{ number_format($riwayatSelesai->sum('TOTAL_BAYAR'), 0, ',', '.') }}</div></div></div>
-                    <div class="col-md-3"><div class="card summary-card bg-white p-4 h-100"><div class="summary-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-fire"></i></div><div class="summary-title">Pesanan Aktif</div><div class="summary-value">{{ count($menungguBayar) + count($sedangProses) }}</div></div></div>
-                    <div class="col-md-3"><div class="card summary-card bg-white p-4 h-100"><div class="summary-icon bg-info bg-opacity-10 text-info"><i class="bi bi-grid-3x3-gap-fill"></i></div><div class="summary-title">Meja Terisi</div><div class="summary-value">{{ count($mejaTerisi) }} / {{ count($daftarMeja) }}</div></div></div>
+                    <div class="col-md-3">
+                        <div class="card summary-card bg-white p-4 h-100">
+                            <div class="summary-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-receipt"></i></div>
+                            <div class="summary-title">Total Pesanan Hari Ini</div>
+                            <div class="summary-value">{{ $riwayatSelesai->count() + count($menungguBayar) + count($sedangProses) }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card summary-card bg-white p-4 h-100">
+                            <div class="summary-icon bg-success bg-opacity-10 text-success"><i class="bi bi-cash-stack"></i></div>
+                            <div class="summary-title">Total Omset Hari Ini</div>
+                            <div class="summary-value">Rp {{ number_format($riwayatSelesai->sum('TOTAL_BAYAR'), 0, ',', '.') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card summary-card bg-white p-4 h-100">
+                            <div class="summary-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-fire"></i></div>
+                            <div class="summary-title">Pesanan Aktif</div>
+                            <div class="summary-value">{{ count($menungguBayar) + count($sedangProses) }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card summary-card bg-white p-4 h-100">
+                            <div class="summary-icon bg-info bg-opacity-10 text-info"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                            <div class="summary-title">Meja Terisi</div>
+                            <div class="summary-value">{{ count($mejaTerisi) }} / {{ count($daftarMeja) }}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <h5 class="fw-bold mb-4 text-secondary ps-2 border-start border-4 border-primary">Status Meja</h5>
@@ -107,7 +139,9 @@
                                 <div class="card-body text-center py-4">
                                     <div class="meja-icon"><i class="bi bi-grid-fill"></i></div>
                                     <h5 class="fw-bold mb-2">{{ $meja->ID_MEJA }}</h5>
-                                    <span class="badge {{ $terisi ? 'bg-danger' : 'bg-success' }} bg-opacity-10 text-{{ $terisi ? 'danger' : 'success' }} rounded-pill px-3 py-1 fw-bold" style="font-size: 0.75rem;">{{ $terisi ? 'Terisi' : 'Tersedia' }}</span>
+                                    <span class="badge {{ $terisi ? 'bg-danger' : 'bg-success' }} bg-opacity-10 text-{{ $terisi ? 'danger' : 'success' }} rounded-pill px-3 py-1 fw-bold" style="font-size: 0.75rem;">
+                                        {{ $terisi ? 'Terisi' : 'Tersedia' }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -117,7 +151,10 @@
                 <div class="row g-4">
                     <div class="col-lg-7">
                         <div class="card-modern mb-4">
-                            <div class="card-header-modern bg-white"><h6 class="card-title-modern text-danger"><i class="bi bi-wallet2"></i> Menunggu Pembayaran</h6></div>
+                            <div class="card-header-modern bg-white">
+                                <h6 class="card-title-modern text-danger"><i class="bi bi-wallet2"></i> Menunggu Pembayaran</h6>
+                                @if(count($menungguBayar) > 0) <span class="badge bg-danger rounded-pill px-3 py-2">{{ count($menungguBayar) }} Pesanan</span> @endif
+                            </div>
                             <div class="table-scroll-container border-0 rounded-0" style="max-height: 350px;">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="bg-light"><tr><th>ID</th><th>Meja</th><th class="text-end">Total</th><th class="text-center">Aksi</th></tr></thead>
@@ -128,17 +165,24 @@
                                             <td><span class="badge bg-dark rounded-pill px-3 py-1">Meja {{ $p->ID_MEJA }}</span></td>
                                             <td class="fw-bold text-end fs-6">Rp {{ number_format($p->TOTAL_BAYAR, 0, ',', '.') }}</td>
                                             <td class="text-center">
-                                                <button class="btn btn-sm btn-success btn-modern text-white rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalBayar{{ $p->ID_PESANAN }}"><i class="bi bi-check-lg me-1"></i> Proses</button>
+                                                <button class="btn btn-sm btn-success btn-modern text-white rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalBayar{{ $p->ID_PESANAN }}">
+                                                    <i class="bi bi-check-lg me-1"></i> Proses
+                                                </button>
                                             </td>
                                         </tr>
-                                        @empty <tr><td colspan="4" class="text-center py-5 text-muted small">Tidak ada antrean.</td></tr> @endforelse
+                                        @empty
+                                        <tr><td colspan="4" class="text-center py-5 text-muted small"><i class="bi bi-wallet2 fs-1 d-block mb-3 opacity-25"></i>Tidak ada antrean bayar</td></tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
                         <div class="card-modern">
-                            <div class="card-header-modern bg-white"><h6 class="card-title-modern text-primary"><i class="bi bi-fire"></i> Sedang Dimasak</h6></div>
+                            <div class="card-header-modern bg-white">
+                                <h6 class="card-title-modern text-primary"><i class="bi bi-fire"></i> Sedang Dimasak</h6>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">{{ count($sedangProses) }} Aktif</span>
+                            </div>
                             <div class="table-scroll-container border-0 rounded-0">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead><tr><th>ID</th><th>Meja</th><th>Status</th><th>Aksi</th></tr></thead>
@@ -149,7 +193,7 @@
                                             <td><span class="badge bg-dark rounded-pill px-3 py-1">Meja {{ $p->ID_MEJA }}</span></td>
                                             <td id="status-badge-{{ $p->ID_PESANAN }}">
                                                 @if($p->STATUS_PESANAN == 'Proses') <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Antre</span>
-                                                @elseif($p->STATUS_PESANAN == 'Dimasak') <span class="badge bg-info rounded-pill px-3 py-1">Siap Dimasak</span>
+                                                @elseif($p->STATUS_PESANAN == 'Dimasak') <span class="badge bg-info rounded-pill px-3 py-1">Masak</span>
                                                 @elseif($p->STATUS_PESANAN == 'Siap') <span class="badge bg-success rounded-pill px-3 py-1">Siap</span> @endif
                                             </td>
                                             <td>
@@ -162,11 +206,15 @@
                                                     </form>
                                                     <button class="btn btn-sm btn-light border rounded-circle shadow-sm" data-bs-toggle="modal" data-bs-target="#detailPesanan{{ $p->ID_PESANAN }}" title="Lihat Detail"><i class="bi bi-eye"></i></button>
                                                     
-                                                    <a href="{{ route('cetak.dapur', $p->ID_PESANAN) }}" target="_blank" class="btn btn-sm btn-dark rounded-circle text-white shadow-sm" title="Cetak Bon Dapur"><i class="bi bi-printer-fill"></i></a>
+                                                    <a href="{{ route('cetak.dapur', $p->ID_PESANAN) }}" target="_blank" class="btn btn-sm btn-dark rounded-circle text-white shadow-sm" title="Cetak Bon Dapur">
+                                                        <i class="bi bi-printer-fill"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
-                                        @empty <tr><td colspan="4" class="text-center py-5 text-muted small">Dapur santai.</td></tr> @endforelse
+                                        @empty
+                                        <tr><td colspan="4" class="text-center py-5 text-muted small"><i class="bi bi-cup-hot fs-1 d-block mb-3 opacity-25"></i>Dapur sedang santai.</td></tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -184,7 +232,9 @@
                                             <input type="date" name="tanggal" class="form-control border-0 bg-light pe-3" value="{{ $tanggalFilter }}" onchange="this.form.submit()">
                                         </div>
                                     </form>
-                                    <a href="{{ route('kasir.export', ['tanggal' => $tanggalFilter]) }}" class="btn btn-sm btn-success rounded-pill shadow-sm px-3"><i class="bi bi-file-earmark-spreadsheet me-2"></i> Excel</a>
+                                    <a href="{{ route('kasir.export', ['tanggal' => $tanggalFilter]) }}" class="btn btn-sm btn-success rounded-pill shadow-sm d-flex align-items-center px-3" title="Download Excel">
+                                        <i class="bi bi-file-earmark-spreadsheet me-2"></i> Excel
+                                    </a>
                                 </div>
                             </div>
                             <div class="table-scroll-container border-0 rounded-0 flex-grow-1" style="max-height: 500px;">
@@ -193,24 +243,29 @@
                                     <tbody>
                                         @forelse($riwayatSelesai as $p)
                                         <tr>
-                                            <td class="small text-muted">{{ $p->pembayaran ? substr($p->pembayaran->WAKTU_PEMBAYARAN, 11, 5) : '-' }}</td>
+                                            <td class="small text-muted">{{ $p->pembayaran ? \Carbon\Carbon::parse($p->pembayaran->WAKTU_PEMBAYARAN)->setTimezone('Asia/Jakarta')->format('H:i') : '-' }}</td>
                                             <td class="fw-bold small">#{{ $p->ID_PESANAN }}</td>
                                             <td class="fw-bold text-success small">Rp {{ number_format($p->TOTAL_BAYAR/1000, 0) }}k</td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    <button class="btn btn-sm btn-light rounded-circle border shadow-sm" data-bs-toggle="modal" data-bs-target="#detailPesanan{{ $p->ID_PESANAN }}"><i class="bi bi-eye"></i></button>
-                                                    <a href="{{ route('cetak.struk', $p->ID_PESANAN) }}" target="_blank" class="btn btn-sm btn-dark rounded-circle text-white shadow-sm"><i class="bi bi-printer-fill"></i></a>
+                                                    <button class="btn btn-sm btn-light rounded-circle border shadow-sm" data-bs-toggle="modal" data-bs-target="#detailPesanan{{ $p->ID_PESANAN }}" title="Lihat Detail"><i class="bi bi-eye"></i></button>
+                                                    <a href="{{ route('cetak.struk', $p->ID_PESANAN) }}" target="_blank" class="btn btn-sm btn-dark rounded-circle text-white shadow-sm" title="Cetak Struk"><i class="bi bi-printer-fill"></i></a>
                                                 </div>
                                             </td>
                                         </tr>
-                                        @empty <tr><td colspan="4" class="text-center py-5 text-muted small">Belum ada data.</td></tr> @endforelse
+                                        @empty
+                                        <tr><td colspan="4" class="text-center py-5 text-muted small"><i class="bi bi-clock-history fs-1 d-block mb-3 opacity-25"></i>Belum ada data.</td></tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <div class="p-3 border-top bg-white mt-auto">
                                 <div class="d-flex justify-content-between align-items-center bg-success-subtle p-4 rounded-4 shadow-sm border border-success-subtle">
-                                    <div><small class="text-success fw-bold text-uppercase d-block mb-1">TOTAL OMSET</small><div class="badge bg-success rounded-pill px-3 py-1 fs-6">{{ \Carbon\Carbon::parse($tanggalFilter)->format('d M') }}</div></div>
-                                    <h2 class="fw-extrabold text-success mb-0 fs-3">Rp {{ number_format($riwayatSelesai->sum('TOTAL_BAYAR'), 0, ',', '.') }}</h2>
+                                    <div>
+                                        <small class="text-success fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">TOTAL OMSET HARI INI</small>
+                                        <div class="badge bg-success rounded-pill px-3 py-1 fs-6"><i class="bi bi-calendar-check me-2"></i> {{ \Carbon\Carbon::parse($tanggalFilter)->format('d M Y') }}</div>
+                                    </div>
+                                    <h2 class="fw-extrabold text-success mb-0 tracking-tight fs-3">Rp {{ number_format($riwayatSelesai->sum('TOTAL_BAYAR'), 0, ',', '.') }}</h2>
                                 </div>
                             </div>
                         </div>
@@ -220,8 +275,13 @@
 
             <div class="tab-pane fade" id="nav-menu">
                 <div class="d-flex justify-content-between align-items-center mb-5">
-                    <div><h1 class="fw-bold mb-2">Daftar Menu</h1><p class="text-muted mb-0 fs-5">Kelola ketersediaan menu.</p></div>
-                    <button class="btn btn-primary btn-modern rounded-pill shadow-lg px-4 py-2 fs-6" data-bs-toggle="modal" data-bs-target="#modalTambahMenu"><i class="bi bi-plus-lg me-2"></i> Tambah Menu</button>
+                    <div>
+                        <h1 class="fw-bold mb-2" style="color: var(--text-dark);">Daftar Menu</h1>
+                        <p class="text-muted mb-0 fs-5">Kelola ketersediaan dan informasi menu restoran.</p>
+                    </div>
+                    <button class="btn btn-primary btn-modern rounded-pill shadow-lg px-4 py-2 fs-6" data-bs-toggle="modal" data-bs-target="#modalTambahMenu">
+                        <i class="bi bi-plus-lg me-2"></i> Tambah Menu
+                    </button>
                 </div>
 
                 <div class="bg-white p-2 rounded-pill shadow-sm d-inline-flex mb-5 border">
@@ -233,6 +293,9 @@
                 </div>
 
                 <div class="card-modern">
+                    <div class="card-header-modern bg-white">
+                         <h6 class="card-title-modern text-dark"><i class="bi bi-list-ul"></i> Daftar Semua Menu</h6>
+                    </div>
                     <div class="tab-content p-3">
                         @php $cats = ['makanan' => 'K01', 'minuman' => 'K02', 'snack' => 'K03']; @endphp
                         @foreach($cats as $tabId => $catId)
@@ -242,18 +305,94 @@
                                 <tbody>
                                     @foreach($daftarMenu->where('ID_KATEGORI', $catId) as $m)
                                     <tr>
-                                        <td class="ps-4"><div class="d-flex align-items-center gap-3">@if($m->FOTO) <img src="/images/menu/{{ $m->FOTO }}" class="img-menu shadow-sm"> @else <div class="img-menu bg-light small text-muted d-flex align-items-center justify-content-center">No IMG</div> @endif <span class="fw-bold">{{ $m->NAMA_MENU }}</span></div></td>
-                                        <td>Rp {{ number_format($m->HARGA_SATUAN, 0, ',', '.') }}</td>
-                                        <td><form action="{{ route('menu.status', $m->ID_MENU) }}" method="POST" class="ajax-form-menu">@csrf @method('PATCH')<button class="badge border-0 {{ $m->STATUS_TESEDIA == 'tersedia' ? 'bg-success' : 'bg-secondary' }} rounded-pill px-3 py-2 fw-bold btn-status-menu">{{ ucfirst($m->STATUS_TESEDIA) }}</button></form></td>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-3">
+                                                @if($m->FOTO) <img src="/images/menu/{{ $m->FOTO }}" class="img-menu shadow-sm"> @else <div class="img-menu bg-light d-flex align-items-center justify-content-center small text-muted shadow-sm">No IMG</div> @endif
+                                                <span class="fw-bold fs-6">{{ $m->NAMA_MENU }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="fs-6">Rp {{ number_format($m->HARGA_SATUAN, 0, ',', '.') }}</td>
+                                        <td>
+                                            <form action="{{ route('menu.status', $m->ID_MENU) }}" method="POST" class="ajax-form-menu">
+                                                @csrf @method('PATCH')
+                                                <button type="submit" class="badge border-0 {{ $m->STATUS_TESEDIA == 'tersedia' ? 'bg-success' : 'bg-secondary' }} rounded-pill px-3 py-2 fw-bold btn-status-menu">
+                                                    {{ ucfirst($m->STATUS_TESEDIA) }}
+                                                </button>
+                                            </form>
+                                        </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <button class="btn btn-sm btn-light border rounded-pill px-3 fw-bold text-muted shadow-sm" data-bs-toggle="modal" data-bs-target="#editMenu{{ $m->ID_MENU }}"><i class="bi bi-pencil-square"></i> Edit</button>
-                                                <button class="btn btn-sm btn-danger bg-opacity-10 text-danger border-0 rounded-circle shadow-sm" data-bs-toggle="modal" data-bs-target="#hapusMenu{{ $m->ID_MENU }}"><i class="bi bi-trash"></i></button>
+                                                <button class="btn btn-sm btn-light border rounded-pill px-3 fw-bold text-muted shadow-sm" data-bs-toggle="modal" data-bs-target="#editMenu{{ $m->ID_MENU }}">
+                                                    <i class="bi bi-pencil-square"></i> Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-danger bg-opacity-10 text-danger border-0 rounded-circle shadow-sm" data-bs-toggle="modal" data-bs-target="#hapusMenu{{ $m->ID_MENU }}">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                    <div class="modal fade" id="editMenu{{ $m->ID_MENU }}" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content shadow-lg border-0"><div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold">Edit Menu</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form action="{{ route('menu.update', $m->ID_MENU) }}" method="POST" enctype="multipart/form-data">@csrf @method('PUT')<div class="modal-body"><div class="mb-3"><label>Nama</label><input type="text" name="NAMA_MENU" class="form-control" value="{{ $m->NAMA_MENU }}" required></div><div class="mb-3"><label>Harga</label><input type="number" name="HARGA_SATUAN" class="form-control" value="{{ $m->HARGA_SATUAN }}" required></div><div class="mb-3"><label>Kategori</label><select name="ID_KATEGORI" class="form-select"><option value="K01" {{$m->ID_KATEGORI=='K01'?'selected':''}}>Makanan</option><option value="K02" {{$m->ID_KATEGORI=='K02'?'selected':''}}>Minuman</option><option value="K03" {{$m->ID_KATEGORI=='K03'?'selected':''}}>Snack</option></select></div><div class="mb-3"><label>Foto</label><input type="file" name="FOTO" class="form-control"></div></div><div class="modal-footer border-0"><button class="btn btn-primary w-100 rounded-pill">Simpan</button></div></form></div></div></div>
-                                    <div class="modal fade" id="hapusMenu{{ $m->ID_MENU }}" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content shadow-lg border-0"><div class="modal-body text-center p-4"><div class="text-danger mb-3"><i class="bi bi-exclamation-circle" style="font-size:3rem;"></i></div><h5 class="fw-bold">Hapus?</h5><p class="small text-muted">Menu <b>{{ $m->NAMA_MENU }}</b> akan hilang permanen.</p><form action="{{ route('menu.destroy', $m->ID_MENU) }}" method="POST">@csrf @method('DELETE')<button class="btn btn-danger w-100 rounded-pill mb-2">Ya, Hapus</button><button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Batal</button></form></div></div></div></div>
+
+                                    <div class="modal fade" id="editMenu{{ $m->ID_MENU }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content shadow-lg border-0">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title fw-bold">Edit Menu</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="{{ route('menu.update', $m->ID_MENU) }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3 text-center">
+                                                            @if($m->FOTO) <img src="/images/menu/{{ $m->FOTO }}" class="rounded-3 shadow-sm mb-2" style="width: 100px; height: 100px; object-fit: cover;"> @endif
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Nama Menu</label>
+                                                            <input type="text" name="NAMA_MENU" class="form-control" value="{{ $m->NAMA_MENU }}" required>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-6 mb-3">
+                                                                <label class="form-label small fw-bold">Harga</label>
+                                                                <input type="number" name="HARGA_SATUAN" class="form-control" value="{{ $m->HARGA_SATUAN }}" required>
+                                                            </div>
+                                                            <div class="col-6 mb-3">
+                                                                <label class="form-label small fw-bold">Kategori</label>
+                                                                <select name="ID_KATEGORI" class="form-select">
+                                                                    <option value="K01" {{ $m->ID_KATEGORI == 'K01' ? 'selected' : '' }}>Makanan</option>
+                                                                    <option value="K02" {{ $m->ID_KATEGORI == 'K02' ? 'selected' : '' }}>Minuman</option>
+                                                                    <option value="K03" {{ $m->ID_KATEGORI == 'K03' ? 'selected' : '' }}>Snack</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label small fw-bold">Ganti Foto (Opsional)</label>
+                                                            <input type="file" name="FOTO" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-0 pt-0">
+                                                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Simpan Perubahan</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="hapusMenu{{ $m->ID_MENU }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm modal-dialog-centered">
+                                            <div class="modal-content shadow-lg border-0">
+                                                <div class="modal-body text-center p-4">
+                                                    <div class="text-danger mb-3"><i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i></div>
+                                                    <h5 class="fw-bold mb-2">Hapus Menu?</h5>
+                                                    <p class="text-muted small">Menu <b>{{ $m->NAMA_MENU }}</b> akan dihapus permanen.</p>
+                                                    <form action="{{ route('menu.destroy', $m->ID_MENU) }}" method="POST">
+                                                        @csrf @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger w-100 rounded-pill mb-2">Ya, Hapus</button>
+                                                        <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     @endforeach
                                 </tbody>
                             </table>
@@ -262,34 +401,289 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <div class="modal fade" id="modalTambahMenu" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content shadow-lg border-0"><div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold">Tambah Menu</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">@csrf<div class="modal-body"><div class="mb-3"><label>Nama</label><input type="text" name="NAMA_MENU" class="form-control" required></div><div class="mb-3"><label>Harga</label><input type="number" name="HARGA_SATUAN" class="form-control" required></div><div class="mb-3"><label>Kategori</label><select name="ID_KATEGORI" class="form-select"><option value="K01">Makanan</option><option value="K02">Minuman</option><option value="K03">Snack</option></select></div><div class="mb-3"><label>Foto</label><input type="file" name="FOTO" class="form-control" required></div></div><div class="modal-footer border-0"><button class="btn btn-primary w-100 rounded-pill">Simpan</button></div></form></div></div></div>
+    <div class="modal fade" id="modalTambahMeja" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <form action="{{ route('meja.store') }}" method="POST">@csrf
+                    <div class="modal-header border-0"><h5 class="modal-title fw-bold">Meja Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">
+                        <input type="text" name="ID_MEJA" class="form-control form-control-lg bg-light border-0 rounded-3 text-center fw-bold" placeholder="Cth: A8" required>
+                    </div>
+                    <div class="modal-footer border-0 pt-0"><button type="submit" class="btn btn-primary w-100 rounded-pill btn-modern">Simpan</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <div class="modal fade" id="modalTambahMeja" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content shadow-lg"><form action="{{ route('meja.store') }}" method="POST">@csrf<div class="modal-header border-0"><h5 class="modal-title fw-bold">Meja Baru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" name="ID_MEJA" class="form-control form-control-lg bg-light border-0 rounded-3 text-center fw-bold" placeholder="Cth: A8" required></div><div class="modal-footer border-0 pt-0"><button class="btn btn-primary w-100 rounded-pill btn-modern">Simpan</button></div></form></div></div></div>
+    <div class="modal fade" id="modalTambahMenu" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Tambah Menu Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nama Menu</label>
+                            <input type="text" name="NAMA_MENU" class="form-control" placeholder="Contoh: Kopi Susu" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Harga (Rp)</label>
+                                <input type="number" name="HARGA_SATUAN" class="form-control" placeholder="15000" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Kategori</label>
+                                <select name="ID_KATEGORI" class="form-select" required>
+                                    <option value="K01">Makanan</option>
+                                    <option value="K02">Minuman</option>
+                                    <option value="K03">Snack</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Foto Menu</label>
+                            <input type="file" name="FOTO" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Simpan Menu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     @php $semuaPesanan = $menungguBayar->merge($sedangProses)->merge($riwayatSelesai); @endphp
     @foreach($semuaPesanan as $p)
-        <div class="modal fade" id="detailPesanan{{ $p->ID_PESANAN }}" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content shadow-lg"><div class="modal-header bg-light border-0"><h5>Pesanan #{{ $p->ID_PESANAN }}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><table class="table table-striped mb-0"><tbody>@foreach($p->detail as $item)<tr><td class="ps-4">{{ $item->menu->NAMA_MENU ?? 'Menu Dihapus' }}</td><td class="fw-bold text-center">x{{ $item->QTY }}</td><td class="text-end pe-4">{{ number_format($item->SUBTOTAL, 0, ',', '.') }}</td></tr>@endforeach</tbody><tfoot class="bg-white"><tr><td colspan="2" class="ps-4 fw-bold">TOTAL</td><td class="text-end pe-4 fw-bold text-primary">{{ number_format($p->TOTAL_BAYAR, 0, ',', '.') }}</td></tr></tfoot></table></div></div></div></div>
-        <div class="modal fade" id="modalBayar{{ $p->ID_PESANAN }}" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content shadow-lg border-0"><div class="modal-header bg-success text-white border-0 justify-content-center"><h5 class="fw-bold">Konfirmasi Bayar</h5></div><form action="{{ route('pesanan.bayar', $p->ID_PESANAN) }}" method="POST" class="ajax-form-bayar" data-id="{{ $p->ID_PESANAN }}">@csrf<div class="modal-body text-center p-4"><h2 class="fw-bold">{{ number_format($p->TOTAL_BAYAR, 0, ',', '.') }}</h2><select name="id_metode" class="form-select mt-3" required><option value="">Pilih Metode...</option>@foreach($metodeBayar as $mb)<option value="{{ $mb->ID_METODE }}">{{ $mb->NAMA_METODE }}</option>@endforeach</select></div><div class="p-4 pt-0"><button class="btn btn-success w-100 rounded-pill">Terima Pembayaran</button></div></form></div></div></div>
+        <div class="modal fade" id="detailPesanan{{ $p->ID_PESANAN }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content shadow-lg overflow-hidden">
+                    <div class="modal-header bg-light border-0 py-3 px-4">
+                        <div><h5 class="modal-title fw-bold fs-5">Pesanan #{{ $p->ID_PESANAN }}</h5><small class="text-muted fs-6">Meja {{ $p->ID_MEJA }}</small></div>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <table class="table table-striped mb-0">
+                            <tbody>
+                                @foreach($p->detail as $item)
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            @if($item->menu && $item->menu->FOTO) <img src="/images/menu/{{ $item->menu->FOTO }}" class="img-menu shadow-sm" style="width: 40px; height: 40px;"> @else <div class="img-menu bg-light d-flex align-items-center justify-content-center small text-muted shadow-sm" style="width: 40px; height: 40px;">No IMG</div> @endif
+                                            <span class="fw-bold">{{ $item->menu ? $item->menu->NAMA_MENU : 'Menu Dihapus' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center fw-bold py-3">x{{ $item->QTY }}</td>
+                                    <td class="text-end pe-4 py-3 fw-bold">Rp {{ number_format($item->SUBTOTAL, 0, ',', '.') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot class="bg-white"><tr><td colspan="2" class="ps-4 py-3 fw-bold fs-5">TOTAL BAYAR</td><td class="text-end pe-4 py-3 fw-bold text-primary fs-4">Rp {{ number_format($p->TOTAL_BAYAR, 0, ',', '.') }}</td></tr></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalBayar{{ $p->ID_PESANAN }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-success text-white border-0 justify-content-center py-3"><h5 class="modal-title fw-bold">Konfirmasi Bayar</h5></div>
+                    <form action="{{ route('pesanan.bayar', $p->ID_PESANAN) }}" method="POST" class="ajax-form-bayar" data-id="{{ $p->ID_PESANAN }}">
+                        @csrf
+                        <div class="modal-body text-center p-4">
+                            <h2 class="fw-bold text-dark mb-1 fs-2">Rp {{ number_format($p->TOTAL_BAYAR, 0, ',', '.') }}</h2>
+                            <p class="text-muted small mb-4 fs-6">ID Pesanan: #{{ $p->ID_PESANAN }}</p>
+                            <div class="text-start">
+                                <label class="fw-bold small mb-2 text-secondary fs-6">Metode Pembayaran</label>
+                                <select name="id_metode" class="form-select form-select-lg bg-light border-0 rounded-3 fs-6 shadow-sm" required>
+                                    <option value="">Pilih Metode...</option>
+                                    @foreach($metodeBayar as $mb) <option value="{{ $mb->ID_METODE }}">{{ $mb->NAMA_METODE }}</option> @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0"><button type="submit" class="btn btn-success w-100 rounded-pill btn-modern py-2 fs-6 shadow-sm">Terima Pembayaran</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
     @endforeach
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            @if(session('success')) Swal.fire({icon:'success', title:'Berhasil!', text:'{{ session('success') }}', timer:2000, showConfirmButton:false}); @endif
-            @if(session('error')) Swal.fire({icon:'error', title:'Gagal!', text:'{{ session('error') }}'}); @endif
+            
+            // --- NOTIFIKASI SUKSES / GAGAL ---
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            @endif
 
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: '{{ session('error') }}',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Oke, Saya Paham'
+                });
+            @endif
+
+            // Logic Tab
             let lastMainTab = localStorage.getItem('lastMainTab') || 'nav-pos-tab';
             let mainTabElement = document.querySelector(`#${lastMainTab}`);
             if(mainTabElement) new bootstrap.Tab(mainTabElement).show();
-            document.querySelectorAll('.nav-sidebar .nav-link').forEach(btn => { btn.addEventListener('shown.bs.tab', e => localStorage.setItem('lastMainTab', e.target.id)); });
 
-            // AJAX FORMS
-            document.querySelectorAll('.ajax-form-bayar').forEach(form => { form.addEventListener('submit', function(e) { e.preventDefault(); let btn=this.querySelector('button'); btn.innerHTML='Loading...'; btn.disabled=true; let id=this.getAttribute('data-id'); let modal=bootstrap.Modal.getInstance(document.getElementById(`modalBayar${id}`)); fetch(this.action, {method:'POST', body:new FormData(this), headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content}}).then(res=>{if(res.ok){modal.hide(); document.getElementById(`row-bayar-${id}`).remove(); Swal.fire({icon:'success',title:'Berhasil!',timer:1500,showConfirmButton:false}); setTimeout(()=>window.location.reload(),1500);}}).catch(err=>{console.error(err);btn.disabled=false;}); }); });
-            document.querySelectorAll('.ajax-form-status').forEach(form => { form.addEventListener('submit', function(e) { e.preventDefault(); let btn=this.querySelector('button'); let id=this.getAttribute('data-id'); fetch(this.action, {method:'POST', body:new FormData(this), headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content}}).then(res=>{if(res.ok){ if(btn.innerText.includes('Masak')){btn.innerHTML='<i class="bi bi-bell-fill me-1"></i> Panggil';btn.classList.replace('btn-outline-warning','btn-outline-info');document.getElementById(`status-badge-${id}`).innerHTML='<span class="badge bg-info rounded-pill px-3 py-1">Masak</span>';} else if(btn.innerText.includes('Panggil')){btn.innerHTML='<i class="bi bi-check-all me-1"></i> Selesai';btn.classList.replace('btn-outline-info','btn-outline-success');document.getElementById(`status-badge-${id}`).innerHTML='<span class="badge bg-success rounded-pill px-3 py-1">Siap</span>';} else {document.getElementById(`row-proses-${id}`).remove(); Swal.fire({icon:'success',title:'Selesai!',timer:1000,showConfirmButton:false}); setTimeout(()=>window.location.reload(),1000);} }}); }); });
-            document.querySelectorAll('.ajax-form-menu').forEach(form => { form.addEventListener('submit', function(e) { e.preventDefault(); let btn=this.querySelector('button'); fetch(this.action, {method:'POST', body:new FormData(this), headers:{'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content}}).then(res=>{if(res.ok){ if(btn.classList.contains('bg-success')){btn.classList.replace('bg-success','bg-secondary');btn.innerText='Habis';} else{btn.classList.replace('bg-secondary','bg-success');btn.innerText='Tersedia';} }}); }); });
+            document.querySelectorAll('.nav-sidebar .nav-link').forEach(btn => {
+                btn.addEventListener('shown.bs.tab', e => localStorage.setItem('lastMainTab', e.target.id));
+            });
+
+            // ============================================================
+            // 3. FUNGSI PENGIKAT TOMBOL (AGAR TOMBOL TETAP JALAN SETELAH AUTO-REFRESH)
+            // ============================================================
+            function bindActions() {
+                // A. LOGIC TOMBOL BAYAR (AJAX)
+                document.querySelectorAll('.ajax-form-bayar').forEach(form => {
+                    // Hapus listener lama (kloning) biar gak double klik
+                    let newForm = form.cloneNode(true);
+                    form.parentNode.replaceChild(newForm, form);
+
+                    newForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        let btn = this.querySelector('button[type="submit"]');
+                        let originalText = btn.innerHTML;
+                        btn.innerHTML = 'Loading...'; btn.disabled = true;
+                        let id = this.getAttribute('data-id');
+                        let modalEl = document.getElementById(`modalBayar${id}`);
+                        let modal = bootstrap.Modal.getInstance(modalEl);
+                        
+                        if(!modal) modal = new bootstrap.Modal(modalEl);
+
+                        fetch(this.action, {
+                            method: 'POST',
+                            body: new FormData(this),
+                            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                        })
+                        .then(res => {
+                            if(res.ok) {
+                                modal.hide();
+                                Swal.fire({icon: 'success', title: 'Pembayaran Berhasil!', timer: 1000, showConfirmButton: false});
+                                loadDashboardData(); // Update data langsung tanpa refresh
+                            }
+                        })
+                        .catch(err => { console.error(err); btn.innerHTML = originalText; btn.disabled = false; });
+                    });
+                });
+
+                // B. LOGIC TOMBOL STATUS (MASAK / SELESAI)
+                document.querySelectorAll('.ajax-form-status').forEach(form => {
+                    let newForm = form.cloneNode(true);
+                    form.parentNode.replaceChild(newForm, form);
+
+                    newForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        let btn = this.querySelector('button');
+                        // Efek Loading Kecil
+                        let originalContent = btn.innerHTML;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                        
+                        fetch(this.action, {
+                            method: 'POST',
+                            body: new FormData(this),
+                            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                        })
+                        .then(res => {
+                            if(res.ok) {
+                                // Jika sukses, langsung refresh data tabelnya saja
+                                loadDashboardData(); 
+                                // Opsional: Kasih notif kecil
+                                const Toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1000});
+                                Toast.fire({icon: 'success', title: 'Status Diperbarui'});
+                            }
+                        });
+                    });
+                });
+            }
+
+            // ============================================================
+            // 4. ENGINE AUTO-REFRESH (JANTUNGNYA DISINI)
+            // ============================================================
+            function loadDashboardData() {
+                // Hanya refresh kalau sedang di Tab "Monitor Pesanan"
+                if(!document.querySelector('#nav-pos').classList.contains('active')) return;
+
+                fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(html, 'text/html');
+
+                    // Update Tabel Menunggu Bayar
+                    let newTabelBayar = doc.getElementById('list-menunggu-bayar').innerHTML;
+                    if(document.getElementById('list-menunggu-bayar').innerHTML !== newTabelBayar) {
+                        document.getElementById('list-menunggu-bayar').innerHTML = newTabelBayar;
+                        bindActions(); // Pasang ulang fungsi tombol
+                    }
+
+                    // Update Tabel Sedang Dimasak
+                    let newTabelProses = doc.getElementById('list-sedang-proses').innerHTML;
+                    if(document.getElementById('list-sedang-proses').innerHTML !== newTabelProses) {
+                        document.getElementById('list-sedang-proses').innerHTML = newTabelProses;
+                        bindActions(); // Pasang ulang fungsi tombol
+                    }
+
+                    // Update Angka Statistik (Total & Omset)
+                    let newStats = doc.querySelector('.row.mb-5.g-4').innerHTML;
+                    if(document.querySelector('.row.mb-5.g-4').innerHTML !== newStats) {
+                        document.querySelector('.row.mb-5.g-4').innerHTML = newStats;
+                    }
+
+                    // Update Status Meja (Kotak-kotak meja)
+                    let newMeja = doc.querySelector('.row.mb-5.g-3').innerHTML;
+                    if(document.querySelector('.row.mb-5.g-3').innerHTML !== newMeja) {
+                        document.querySelector('.row.mb-5.g-3').innerHTML = newMeja;
+                    }
+
+                    // Update Riwayat Selesai
+                    let newRiwayat = doc.querySelector('#nav-pos .col-lg-5 .table tbody').innerHTML;
+                    if(document.querySelector('#nav-pos .col-lg-5 .table tbody').innerHTML !== newRiwayat) {
+                        document.querySelector('#nav-pos .col-lg-5 .table tbody').innerHTML = newRiwayat;
+                    }
+                })
+                .catch(err => console.log('Silent refresh skip...'));
+            }
+
+            // Jalankan fungsi pengikat tombol pertama kali
+            bindActions();
+
+            // Jalankan Auto-Refresh setiap 3 Detik
+            setInterval(loadDashboardData, 3000); 
+
+            // Logic Menu (Terpisah karena jarang berubah)
+            document.querySelectorAll('.ajax-form-menu').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    let btn = this.querySelector('.btn-status-menu');
+                    fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } })
+                    .then(res => { if(res.ok) { 
+                        if(btn.classList.contains('bg-success')) { btn.classList.replace('bg-success', 'bg-secondary'); btn.innerText = 'Habis'; }
+                        else { btn.classList.replace('bg-secondary', 'bg-success'); btn.innerText = 'Tersedia'; }
+                    }});
+                });
+            });
+
         });
     </script>
 </body>

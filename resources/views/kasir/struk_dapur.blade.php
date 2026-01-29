@@ -39,7 +39,7 @@
         .menu-name {
             font-size: 16px;
             font-weight: bold;
-            margin-top: 3px; /* Biar sejajar sama kotak */
+            margin-top: 3px;
             line-height: 1.2;
         }
 
@@ -54,7 +54,7 @@
 
     <div class="text-center">
         <h3 style="margin:0; text-transform: uppercase;">ORDER DAPUR</h3>
-        <p style="margin:5px 0;">{{ date('d/m/Y H:i', strtotime($order->created_at)) }}</p>
+        <p style="margin:5px 0;">{{ \Carbon\Carbon::parse($order->created_at)->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}</p>
     </div>
 
     <div class="line"></div>
