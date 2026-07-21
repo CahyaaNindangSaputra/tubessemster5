@@ -35,18 +35,25 @@
         .nav-link-custom.active { color: #fff !important; background-color: transparent !important; }
         .glider { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); background-color: var(--primary-dark); border-radius: 50px; z-index: 1; transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
 
-        /* Menu Card */
-        .menu-card { border: none; border-radius: 20px; transition: 0.4s; background: #fff; overflow: hidden; position: relative; height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .menu-card:active { transform: scale(0.98); } 
-        .menu-card.stok-habis { opacity: 0.6; filter: grayscale(1); pointer-events: none; }
+        /* Menu Card & Estetik Micro-Interactions */
+        .menu-card { border: none; border-radius: 20px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); background: #fff; overflow: hidden; position: relative; height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .menu-card:hover { transform: translateY(-6px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); }
+        .menu-card:active { transform: scale(0.95); } 
+        .menu-card.stok-habis { opacity: 0.6; filter: grayscale(1); }
         
         .img-container { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #f8f9fa; position: relative; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .menu-card:hover .img-container img { transform: scale(1.08); }
 
-        /* Floating Buttons */
-        .floating-history { position: fixed; bottom: 25px; left: 20px; z-index: 1000; border-radius: 50px; padding: 12px 20px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: none; font-size: 0.9rem; }
-        .floating-cart { position: fixed; bottom: 25px; right: 20px; z-index: 1000; border-radius: 50px; padding: 12px 25px; font-weight: 700; box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3); border: none; text-decoration: none; font-size: 0.9rem; transition: transform 0.2s; }
-        .cart-bump { transform: scale(1.2); } 
+        /* Floating Buttons dengan Efek Tekan Menarik */
+        .floating-history { position: fixed; bottom: 25px; left: 20px; z-index: 1000; border-radius: 50px; padding: 12px 22px; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: none; font-size: 0.9rem; transition: all 0.2s ease; }
+        .floating-history:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .floating-history:active { transform: scale(0.92); }
+
+        .floating-cart { position: fixed; bottom: 25px; right: 20px; z-index: 1000; border-radius: 50px; padding: 12px 25px; font-weight: 700; box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4); border: none; text-decoration: none; font-size: 0.9rem; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .floating-cart:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 30px rgba(13, 110, 253, 0.5); }
+        .floating-cart:active { transform: scale(0.92); }
+        .cart-bump { transform: scale(1.25) rotate(5deg); } 
 
         .modal-body::-webkit-scrollbar { width: 4px; }
         .modal-body::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 10px; }
@@ -59,10 +66,12 @@
             p.small { font-size: 0.8rem; }
         }
 
-        /* BUTTON GIVEAWAY */
-        .btn-giveaway { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border-radius: 50%; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5); z-index: 1050; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; animation: bounce-gift 2s infinite; transition: transform 0.3s; }
-        .btn-giveaway:hover { transform: scale(1.1); }
+        /* BUTTON GIVEAWAY DENGAN EFEK HOVER & ACTIVE MENGEMBANG */
+        .btn-giveaway { position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border-radius: 50%; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5); z-index: 1050; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; animation: bounce-gift 2s infinite; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .btn-giveaway:hover { transform: scale(1.15) rotate(8deg); }
+        .btn-giveaway:active { transform: scale(0.9); }
         @keyframes bounce-gift { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(-5deg); } 75% { transform: translateY(-5px) rotate(5deg); } }
+        
         .modal-giveaway-header { background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%); color: white; border-bottom: 0; border-radius: 20px 20px 0 0; text-align: center; padding: 30px 20px; }
         .gift-icon-big { font-size: 80px; margin-bottom: 10px; text-shadow: 0 5px 15px rgba(0,0,0,0.2); animation: shake 1s infinite; }
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
@@ -73,19 +82,30 @@
         .status-Proses { background: #cff4fc; color: #055160; }
         .status-Dimasak { background: #d1e7dd; color: #0f5132; }
         .status-Siap { background: #d1e7dd; color: #198754; font-weight: bold; }
+
+        /* Tombol Tambah Menu Efek Tekan Halus */
+        .btn-add-cart { transition: all 0.2s ease; }
+        .btn-add-cart:active { transform: scale(0.92); }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-dark navbar-custom sticky-top py-3">
         <div class="container d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold tracking-tight"><i class="bi bi-cup-hot-fill me-2"></i>RIELS COFFEE</span>
-            <span class="badge bg-white text-dark rounded-pill px-3 py-2 fw-bold shadow-sm d-flex align-items-center">
-                <i class="bi bi-geo-alt-fill text-danger me-1"></i> Meja {{ session('customer_meja') }} 
-                @if(session('customer_nama'))
-                    <span class="text-muted mx-2">|</span> <i class="bi bi-person-circle text-primary me-1"></i> {{ session('customer_nama') }}
-                    <a href="{{ route('customer.logout') }}" id="btn-reset" class="btn btn-danger btn-sm rounded-circle ms-2 d-flex align-items-center justify-content-center p-0 shadow-sm" style="width: 20px; height: 20px; text-decoration: none;"> <i class="bi bi-x small text-white"></i> </a>
-                @endif
-            </span>
+            <div class="d-flex align-items-center gap-2">
+                <!-- Indikator Live Update -->
+                <div class="bg-white px-2 py-1 rounded-pill shadow-sm border d-flex align-items-center">
+                    <span class="spinner-grow spinner-grow-sm text-success me-1" role="status"></span>
+                    <small class="text-success fw-bold" style="font-size: 0.7rem;">Live</small>
+                </div>
+                <span class="badge bg-white text-dark rounded-pill px-3 py-2 fw-bold shadow-sm d-flex align-items-center">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Meja {{ session('customer_meja', 'A1') }}
+                    
+                    @if(isset($namaPelanggan))
+                        <span class="text-muted mx-2">|</span> <i class="bi bi-person-circle text-primary me-1"></i> {{ $namaPelanggan }}
+                    @endif
+                </span>
+            </div>
         </div>
     </nav>
 
@@ -99,11 +119,23 @@
             </div>
         @endif
 
-        @if(session('warning'))
-            <div class="alert alert-warning alert-dismissible fade show rounded-4 text-center mb-4 border-0 shadow-sm py-3" role="alert">
+        {{-- Cek secara database apakah masih ada pesanan yang statusnya 'Menunggu' untuk meja ini --}}
+            @php
+            $nomorMejaAktif = session('customer_meja', 'A1');
+            
+            // Cek apakah ada pesanan untuk meja ini yang BELUM lunas / BELUM ada di tabel pembayaran
+            $adaPesananMenunggu = \App\Models\Pemesanan::where('ID_MEJA', $nomorMejaAktif)
+                                    ->where('STATUS_PESANAN', 'Menunggu')
+                                    ->whereDoesntHave('pembayaran')
+                                    ->exists();
+        @endphp
+
+        {{-- Banner peringatan kasir hanya muncul jika status pesanan masih 'Menunggu' (Belum di-acc kasir) --}}
+        @if($adaPesananMenunggu)
+            <div class="alert alert-warning alert-dismissible fade show rounded-4 text-center mb-4 border-0 shadow-sm py-3" role="alert" style="background-color: #fff9db; color: #856404;">
                 <i class="bi bi-cash-coin fs-1 d-block mb-2 text-warning"></i> 
                 <h5 class="fw-bold text-dark">Langkah Terakhir!</h5>
-                <p class="mb-0 small text-dark fw-bold">{{ session('warning') }}</p>
+                <p class="mb-0 small text-dark fw-bold">Mohon segera menuju KASIR untuk melakukan pembayaran tunai.</p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -136,16 +168,45 @@
             <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="{{ $tabId }}">
                 <div class="row g-3">
                     @forelse($daftarMenu->where('ID_KATEGORI', $catId) as $m)
+                    @php
+                        // Logika pengecekan stok bahan otomatis: 
+                        // Jika tidak ada resep terdaftar, menu dianggap selalu tersedia.
+                        // Jika ada resep, cek apakah stok gudang mencukupi kebutuhan resep.
+                        $isTersedia = true;
+                        if (!empty($m->resep) && count($m->resep) > 0) {
+                            foreach ($m->resep as $resep) {
+                                $stokBahan = $resep->stokBahan;
+                                $kebutuhan = $resep->JUMLAH_KEBUTUHAN ?? 1;
+                                $stokTersedia = $stokBahan ? $stokBahan->JUMLAH_BAHAN : 0;
+
+                                if (!$stokBahan || $stokTersedia < $kebutuhan) {
+                                    $isTersedia = false;
+                                    break;
+                                }
+                            }
+                        }
+                    @endphp
                     <div class="col-6 col-md-3 menu-item-col">
-                        <div class="card menu-card h-100 {{ $m->STATUS_TESEDIA == 'habis' ? 'stok-habis' : '' }}">
-                            <div class="img-container">
-                                @if($m->FOTO) <img src="/images/menu/{{ $m->FOTO }}" alt="{{ $m->NAMA_MENU }}"> @else <div class="d-flex align-items-center justify-content-center h-100 text-muted small bg-light">No Photo</div> @endif
+                        <div class="card menu-card h-100 {{ !$isTersedia ? 'stok-habis' : '' }}">
+                            <div class="img-container position-relative">
+                                @if($m->FOTO) 
+                                    <img src="/images/menu/{{ $m->FOTO }}" alt="{{ $m->NAMA_MENU }}"> 
+                                @else 
+                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted small bg-light">No Photo</div> 
+                                @endif
+
+                                {{-- BADGE LABEL MERAH "Bahan Habis" DI POJOK FOTO --}}
+                                @if(!$isTersedia)
+                                    <span class="position-absolute top-0 start-0 badge bg-danger m-2 px-2 py-1 rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                        Bahan Habis
+                                    </span>
+                                @endif
                             </div>
                             <div class="card-body pt-2 px-3 pb-3 d-flex flex-column">
                                 <h6 class="fw-bold mb-1 text-truncate nama-menu" style="font-size: 0.95rem;">{{ $m->NAMA_MENU }}</h6>
                                 <p class="text-primary fw-bold mb-3 small">Rp {{ number_format($m->HARGA_SATUAN, 0, ',', '.') }}</p>
                                 <div class="mt-auto">
-                                    @if($m->STATUS_TESEDIA == 'tersedia')
+                                    @if($isTersedia)
                                         <form action="{{ route('cart.add', $m->ID_MENU) }}" method="POST" onsubmit="addToCart(event, this)">
                                             @csrf
                                             <button type="submit" class="btn btn-dark w-100 rounded-pill btn-sm py-2 fw-bold shadow-sm btn-add-cart">
@@ -168,9 +229,9 @@
         </div>
     </div>
 
-    <button class="btn btn-dark floating-history" data-bs-toggle="modal" data-bs-target="#modalRiwayat"><i class="bi bi-receipt me-1"></i> Status</button>
+    <button class="btn btn-dark floating-history shadow-lg" data-bs-toggle="modal" data-bs-target="#modalRiwayat"><i class="bi bi-receipt me-1"></i> Status</button>
 
-    <a href="{{ route('cart.show') }}" class="btn btn-primary floating-cart" id="floatingCartBtn" style="{{ $cartCount > 0 ? '' : 'display: none;' }}">
+    <a href="{{ route('cart.show') }}" class="btn btn-primary floating-cart shadow-lg" id="floatingCartBtn" style="{{ $cartCount > 0 ? '' : 'display: none;' }}">
         <i class="bi bi-basket2-fill me-1"></i> <span id="cartCountBadge">{{ $cartCount }}</span> Item
     </a>
 
@@ -233,28 +294,42 @@
         function filterMenu(cat, btn) {
             document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            document.querySelectorAll('.menu-item-col').forEach(item => { // Fixed selector
-                // Cari di dalam card apakah ada data kategori (jika pakai data attribute)
-                // Atau tampilkan semua saja karena sudah di loop php per kategori di tab
+            document.querySelectorAll('.menu-item-col').forEach(item => {
             });
         }
 
         // =========================================================
-        // SCRIPT AUTO-UPDATE STATUS PESANAN (REAL-TIME)
+        // SCRIPT AUTO-UPDATE STATUS PESANAN (REAL-TIME POLLING AMAN MEJA)
         // =========================================================
         document.addEventListener("DOMContentLoaded", function() {
+            const currentMeja = "{{ session('customer_meja') }}";
+
             setInterval(function() {
-                fetch(window.location.href)
+                let modalRiwayatAktif = document.querySelector('#modalRiwayat.show');
+                if (modalRiwayatAktif) {
+                    return; // Jangan refresh jika modal riwayat sedang dibuka oleh user
+                }
+
+                // Kirim parameter meja secara spesifik agar tidak tertukar dengan sesi tab lain
+                fetch(`${window.location.pathname}?meja=${encodeURIComponent(currentMeja)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
                 .then(response => response.text())
                 .then(html => {
                     let parser = new DOMParser();
                     let doc = parser.parseFromString(html, 'text/html');
-                    let newContent = doc.getElementById('riwayat-container').innerHTML;
-                    let oldContent = document.getElementById('riwayat-container').innerHTML;
-                    if (newContent !== oldContent) { document.getElementById('riwayat-container').innerHTML = newContent; }
+                    let newContainer = doc.getElementById('riwayat-container');
+                    
+                    if (newContainer) {
+                        let newContent = newContainer.innerHTML;
+                        let oldContent = document.getElementById('riwayat-container').innerHTML;
+                        if (newContent !== oldContent) { 
+                            document.getElementById('riwayat-container').innerHTML = newContent; 
+                        }
+                    }
                 })
                 .catch(err => console.log('Syncing...'));
-            }, 3000);
+            }, 5000); // Sinkronisasi otomatis setiap 5 detik
         });
 
         function moveGlider(target) {

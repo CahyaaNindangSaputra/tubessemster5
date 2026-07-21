@@ -3,90 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAPUR - Meja {{ $order->ID_MEJA }}</title>
-    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/x-icon">
+    <title>Struk Dapur - #{{ $order->ID_PESANAN }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body { 
-            font-family: 'Courier New', monospace; 
-            font-size: 14px; 
-            max-width: 300px; 
-            margin: 0 auto; 
-            padding: 15px; 
-            color: #000; 
-            background: #fff; 
+        body {
+            background-color: #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #1e293b;
+        }
+        .receipt-container {
+            background: #ffffff;
+            width: 340px;
+            padding: 25px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
         .text-center { text-align: center; }
-        .bold { font-weight: bold; }
-        .big { font-size: 32px; font-weight: 900; display: block; margin: 5px 0; }
-        .line { border-bottom: 2px dashed #000; margin: 15px 0; }
+        .fw-bold { font-weight: 700; }
+        .brand-title { font-size: 1.15rem; letter-spacing: 1px; margin-bottom: 2px; }
+        .receipt-subtitle { font-size: 0.75rem; color: #64748b; margin-bottom: 12px; }
+        .divider { border-top: 1px dashed #cbd5e1; margin: 12px 0; }
         
-        /* Tampilan Item + QTY */
-        .item-container {
-            display: flex;
-            align-items: flex-start;
+        .info-section {
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
             margin-bottom: 12px;
+            font-size: 0.8rem;
         }
-        .qty-box {
-            border: 2px solid #000;
-            padding: 4px 8px;
-            font-weight: 900;
-            font-size: 18px;
-            min-width: 30px;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .info-row:last-child { margin-bottom: 0; }
+
+        .table-items {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .table-items th {
+            text-align: left;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+        .table-items td {
+            padding: 8px 0;
+            vertical-align: top;
+        }
+        .text-right { text-align: right; }
+        
+        .total-section {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .footer-note {
             text-align: center;
-            margin-right: 10px;
-            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #ef4444;
+            margin-top: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .menu-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 3px;
-            line-height: 1.2;
+        .btn-print {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: 0.2s;
         }
+        .btn-print:hover { background: #1e293b; }
 
         @media print {
-            @page { margin: 0; size: auto; }
-            body { margin: 0; padding: 10px; }
-            .no-print { display: none; }
+            body { background: transparent; }
+            .receipt-container { box-shadow: none; width: 100%; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
-<body onload="window.print()">
+<body>
 
-    <div class="text-center">
-        <h3 style="margin:0; text-transform: uppercase;">ORDER DAPUR</h3>
-        <p style="margin:5px 0;">{{ \Carbon\Carbon::parse($order->created_at)->setTimezone('Asia/Jakarta')->format('d/m/Y H:i') }}</p>
-    </div>
+    <div class="receipt-container">
+        <!-- Header Toko -->
+        <div class="text-center">
+            <div class="brand-title fw-bold">RIEL'S COFFEE</div>
+            <div class="receipt-subtitle">*** STRUK ***</div>
+        </div>
 
-    <div class="line"></div>
+        <div class="divider"></div>
 
-    <div class="text-center">
-        <span style="font-size: 14px;">MEJA</span>
-        <span class="big">{{ $order->ID_MEJA }}</span>
-    </div>
-
-    <div class="line"></div>
-
-    <div>
-        @foreach($order->detail as $item)
-        <div class="item-container">
-            <div class="qty-box">{{ $item->QTY }}</div>
-            
-            <div class="menu-name">
-                {{ $item->menu->NAMA_MENU ?? 'Menu Dihapus' }}
+        <!-- Informasi Pesanan & Pelanggan -->
+        <div class="info-section">
+            <div class="info-row">
+                <span>No. Pesanan:</span>
+                <span class="fw-bold">#{{ $order->ID_PESANAN }}</span>
+            </div>
+            <div class="info-row">
+                <span>Waktu:</span>
+                <span>{{ date('d/m/Y H:i', strtotime($order->updated_at ?? now())) }}</span>
+            </div>
+            <div class="info-row">
+                <span>No. Meja:</span>
+                <span class="fw-bold" style="font-size: 0.9rem;">MEJA {{ $order->ID_MEJA }}</span>
+            </div>
+            <div class="info-row">
+                <span>Atas Nama:</span>
+                <span class="fw-bold">{{ optional($order->pelanggan)->NAMA_PELANGGAN ?? session('customer_nama', 'Pelanggan') }}</span>
             </div>
         </div>
-        @endforeach
+
+        <!-- Tabel Rincian Menu -->
+        <table class="table-items">
+            <thead>
+                <tr>
+                    <th>MENU / QTY</th>
+                    <th class="text-right">SUBTOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($order->detail as $item)
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ optional($item->menu)->NAMA_MENU ?? 'Menu Dihapus' }}</div>
+                        <div style="font-size: 0.75rem; color: #64748b;">
+                            {{ $item->QTY }}x @ Rp {{ number_format(optional($item->menu)->HARGA_SATUAN ?? 0, 0, ',', '.') }}
+                        </div>
+                    </td>
+                    <td class="text-right fw-bold" style="padding-top: 10px;">
+                        Rp {{ number_format($item->SUBTOTAL, 0, ',', '.') }}
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <!-- Total Keseluruhan -->
+        <div class="total-section">
+            <div class="info-row fw-bold" style="font-size: 1rem;">
+                <span>TOTAL BAYAR:</span>
+                <span style="color: #0d6efd;">Rp {{ number_format($order->TOTAL_BAYAR, 0, ',', '.') }}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Catatan Koki -->
+        <div class="footer-note">
+            ⚡ TERIMA KASIH SUDAH DATANG ⚡
+        </div>
     </div>
 
-    <div class="line"></div>
-
-    <div class="text-center bold">
-        <p style="margin-bottom: 5px;">ORDER ID: #{{ $order->ID_PESANAN }}</p>
-        <p style="font-size: 12px;">*** SEGERA PROSES ***</p>
-    </div>
-
-    <button class="no-print" onclick="window.print()" style="width: 100%; padding: 12px; margin-top: 20px; font-weight: bold; cursor: pointer; background: black; color: white; border: none; border-radius: 8px;">
-        🖨️ Cetak Struk Dapur
+    <!-- Tombol Cetak Manual (Hilang saat diprint) -->
+    <button onclick="window.print()" class="btn-print no-print">
+        <i class="bi bi-printer-fill me-2"></i> Cetak Struk Dapur
     </button>
 
 </body>

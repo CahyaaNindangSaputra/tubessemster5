@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ResepController; // <--- WAJIB ADA INI
+use App\Http\Controllers\DapurController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +24,7 @@ Route::prefix('kasir')->group(function () {
     
     // 1. Dashboard Utama
     Route::get('/', [KasirController::class, 'index'])->name('kasir.dashboard');
+    Route::post('/kasir/selesai/{id}', [KasirController::class, 'selesaikanPesanan'])->name('kasir.selesai');
 
     // 2. Manajemen Meja
     Route::post('/meja/store', [KasirController::class, 'storeMeja'])->name('meja.store');
@@ -76,3 +82,48 @@ Route::post('/payment/qris/{id}/ok', [KasirController::class, 'markQrisPaid'])->
 // 6. Ganti Pelanggan / Logout (Reset Sesi Nama)
 Route::get('/ganti-pelanggan', [KasirController::class, 'logoutPelanggan'])->name('customer.logout');
 
+
+Route::get('/resep/tambah', [ResepController::class, 'create'])->name('resep.create');
+Route::post('/resep/store', [ResepController::class, 'store'])->name('resep.store');
+
+
+
+Route::get('/supplier/stok', [SupplierController::class, 'index'])->name('supplier.index');
+Route::post('/supplier/stok/store', [SupplierController::class, 'store'])->name('supplier.store');
+    // Tambahkan baris ini di routes/web.php
+Route::get('/supplier/dashboard', [SupplierController::class, 'dashboard'])->name('supplier.dashboard');
+
+
+
+// Route untuk melihat halaman dapur (Tampilan koki)
+Route::get('/dapur', [DapurController::class, 'index'])->name('dapur.index');
+
+// Route untuk tombol "Mulai Masak" (Proses pengurangan stok & update status)
+Route::post('/dapur/masak/{id}', [DapurController::class, 'masak'])->name('dapur.masak');
+
+
+// Pastikan rute ini ada
+Route::post('/dapur/update-status/{id}', [DapurController::class, 'updateStatus'])->name('dapur.updateStatus');
+Route::post('/kasir/kirim-dapur/{id}', [KasirController::class, 'kirimKeDapur'])->name('kasir.kirimDapur');
+
+
+// Tambahkan rute ini di dalam routes/web.php
+Route::post('/supplier/bahan/simpan', [SupplierController::class, 'storeBahan'])->name('supplier.storeBahan');
+Route::post('/supplier/bahan/simpan', [SupplierController::class, 'storeBahan'])->name('supplier.storeBahan');
+Route::delete('/supplier/bahan/hapus/{id}', [SupplierController::class, 'destroyBahan'])->name('supplier.destroyBahan');
+Route::put('/supplier/bahan/restock/{id}', [SupplierController::class, 'restockBahan'])->name('supplier.restockBahan');
+Route::put('/supplier/bahan/keluar/{id}', [SupplierController::class, 'keluarBahan'])->name('supplier.keluarBahan');
+Route::get('/supplier/export-excel', [SupplierController::class, 'exportExcel'])->name('supplier.exportExcel');
+
+
+// Rute untuk cetak semua antrean dan mengubah status ke 'Dimasak'
+Route::get('/dapur/cetak-semua', [KasirController::class, 'cetakSemuaAntrean'])->name('cetak.semua.antrean');
+
+// Rute Manajemen Resep di Dapur
+Route::get('/dapur/resep', [ResepController::class, 'index'])->name('dapur.resep.index');
+Route::get('/dapur/resep/tambah', [ResepController::class, 'create'])->name('dapur.resep.tambah');
+Route::post('/dapur/resep', [ResepController::class, 'store'])->name('dapur.resep.store');
+/* Route::delete('/dapur/resep/{id}', [ResepController::class, 'destroy'])->name('dapur.resep.destroy'); */
+Route::delete('/dapur/resep/{id}', [App\Http\Controllers\ResepController::class, 'destroy'])->name('dapur.resep.destroy');
+Route::get('/dapur/resep/{id}/edit', [App\Http\Controllers\ResepController::class, 'edit'])->name('dapur.resep.edit');
+Route::put('/dapur/resep/{id}', [App\Http\Controllers\ResepController::class, 'update'])->name('dapur.resep.update');

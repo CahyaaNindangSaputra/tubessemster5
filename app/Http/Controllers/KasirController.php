@@ -6,23 +6,61 @@ use App\Models\Meja;
 use App\Models\Menu;
 use App\Models\Pemesanan;
 use App\Models\Pelanggan;
+use App\Models\Resep;
+use App\Models\Stokbahan;
+use App\Models\DetilPemesanan;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class KasirController extends Controller
 {
-    // ==========================================
-    // 1. DASHBOARD KASIR
-    // ==========================================
+    // Fungsi bantuan untuk memotong stok bahan baku gudang otomatis dengan aman dan anti-double
+    private function potongStok($id_pesanan) {
+        $cacheKey = 'stok_dipotong_' . $id_pesanan;
+        
+        // Cegah agar fungsi tidak tereksekusi 2x dalam 1 pesanan yang sama
+        if (session()->has($cacheKey)) {
+            return;
+        }
+    
+        // Ambil semua detail menu dari pesanan ini
+        $detilPesanan = DetilPemesanan::where('ID_PESANAN', $id_pesanan)->get();
+        
+        foreach ($detilPesanan as $detil) {
+            // Ambil resep berdasarkan ID_MENU yang dipesan
+            $reseps = Resep::where('ID_MENU', $detil->ID_MENU)->get();
+            
+            foreach ($reseps as $resep) {
+                $stok = Stokbahan::find($resep->ID_BAHAN_STOK);
+                
+                if ($stok) {
+                    // Hitung total pengurangan: jumlah kebutuhan resep x jumlah beli (QTY)
+                    $totalPengurangan = (float)$resep->JUMLAH_KEBUTUHAN * (int)$detil->QTY;
+                    
+                    // Pastikan nilai stok saat ini dikurangi dengan benar dan tidak pernah tembus di bawah 0
+                    $stok->JUMLAH_BAHAN = max(0, (float)$stok->JUMLAH_BAHAN - $totalPengurangan);
+                    
+                    $stok->save();
+                }
+            }
+        }
+    
+        // Tandai pesanan ini sudah dipotong stoknya di session
+        session()->put($cacheKey, true);
+    }
+
     public function index(Request $request) {
         date_default_timezone_set('Asia/Jakarta');
         $tanggalFilter = $request->get('tanggal', date('Y-m-d'));
         
-        $mejaTerisi = Pemesanan::whereIn('STATUS_PESANAN', ['Proses', 'Dimasak', 'Siap'])
-            ->pluck('ID_MEJA')->toArray();
+        $mejaTerisi = \App\Models\Pemesanan::where('STATUS_PESANAN', '!=', 'Selesai')
+                ->pluck('ID_MEJA')
+                ->unique()
+                ->toArray();
     
         $menungguBayar = Pemesanan::where('STATUS_PESANAN', 'Menunggu')->get();
-        $sedangProses = Pemesanan::whereIn('STATUS_PESANAN', ['Proses', 'Dimasak', 'Siap'])->get();
+        $sedangProses = Pemesanan::whereIn('STATUS_PESANAN', ['Antre', 'Proses', 'Dimasak', 'Siap'])->get();
     
         $riwayatSelesai = Pemesanan::where('STATUS_PESANAN', 'Selesai')
             ->whereHas('pembayaran', function($query) use ($tanggalFilter) {
@@ -31,7 +69,7 @@ class KasirController extends Controller
     
         $daftarMeja = Meja::all();
         $daftarMenu = Menu::all();
-        $metodeBayar = DB::table('metode_pembayaran')->get(); 
+        metodeBayar: $metodeBayar = DB::table('metode_pembayaran')->get(); 
     
         return view('kasir.dashboard', compact(
             'daftarMeja', 'mejaTerisi', 'menungguBayar', 'sedangProses', 
@@ -39,9 +77,6 @@ class KasirController extends Controller
         ));
     }
 
-    // ==========================================
-    // 2. CUSTOMER (PEMESANAN DARI HP)
-    // ==========================================
     public function checkout(Request $request) {
         $cart = session()->get('cart');
         if(!$cart) return redirect()->back();
@@ -66,8 +101,10 @@ class KasirController extends Controller
         foreach($cart as $id_menu => $d) {
             DB::table('detil_pemesanan')->insert([
                 'DETIL_PEMESANAN' => rand(100000, 999999), 
-                'ID_PESANAN' => $id_pesanan, 'ID_MENU' => $id_menu,
-                'QTY' => $d['quantity'], 'SUBTOTAL' => $d['price'] * $d['quantity']
+                'ID_PESANAN' => $id_pesanan, 
+                'ID_MENU' => $id_menu,
+                'QTY' => $d['quantity'], 
+                'SUBTOTAL' => $d['price'] * $d['quantity']
             ]);
         }
         
@@ -117,6 +154,9 @@ class KasirController extends Controller
             session(['temp_id_metode' => $request->id_metode]);
             return redirect()->route('customer.qris', $id_pesanan);
         } else {
+            // Potong stok otomatis untuk pembayaran tunai langsung
+            $this->potongStok($id_pesanan);
+
             DB::table('pemesanan')->where('ID_PESANAN', $id_pesanan)
                 ->update(['STATUS_PESANAN' => 'Menunggu']);
             
@@ -132,36 +172,49 @@ class KasirController extends Controller
     }
 
     public function markQrisPaid($id) {
+        $sudahBayar = DB::table('pembayaran')->where('ID_PESANAN', $id)->first();
+        if ($sudahBayar) {
+            return redirect()->route('customer.menu')
+                ->with('success', 'Pembayaran ini sudah pernah diproses sebelumnya!');
+        }
+    
         $id_metode = session('temp_id_metode'); 
         
+        // Potong stok otomatis saat pembayaran QRIS divalidasi lunas
+        $this->potongStok($id);
+    
         DB::table('pemesanan')->where('ID_PESANAN', $id)
-            ->update(['STATUS_PESANAN' => 'Proses']);
-
+            ->update(['STATUS_PESANAN' => 'Proses']); 
+        
+        do {
+            $id_pembayaran = 'B' . rand(1000, 9999);
+            $cekDuplikat = DB::table('pembayaran')->where('ID_PEMBAYARAN', $id_pembayaran)->exists();
+        } while ($cekDuplikat);
+    
         DB::table('pembayaran')->insert([
-            'ID_PEMBAYARAN'     => 'B' . rand(1000, 9999),
+            'ID_PEMBAYARAN'     => $id_pembayaran,
             'ID_PESANAN'        => $id,
             'ID_METODE'         => $id_metode,
             'STATUS_PEMBAYARAN' => 'Lunas',
             'WAKTU_PEMBAYARAN'  => now()
         ]);
-
-        session()->forget('last_order_id');
-        session()->forget('temp_id_metode');
-
+    
+        session()->forget(['last_order_id', 'temp_id_metode']);
+    
         return redirect()->route('customer.menu')
-            ->with('success', 'Pembayaran QRIS Berhasil! Pesanan langsung masuk dapur.');
+            ->with('success', 'Pembayaran QRIS Berhasil! Pesanan langsung masuk ke Dapur.');
     }
 
-    // ==========================================
-    // 3. ADMIN / KASIR ACTIONS
-    // ==========================================
     public function prosesBayar(Request $request, $id) {
         if (!$request->id_metode) {
             return redirect()->back()->with('error', 'PILIH METODE BAYAR DULU BOSS!');
         }
-
-        DB::table('pemesanan')->where('ID_PESANAN', $id)->update(['STATUS_PESANAN' => 'Proses']);
-
+    
+        // Potong stok otomatis saat pembayaran kasir diproses
+        $this->potongStok($id);
+    
+        DB::table('pemesanan')->where('ID_PESANAN', $id)->update(['STATUS_PESANAN' => 'Antre']);
+    
         DB::table('pembayaran')->insert([
             'ID_PEMBAYARAN'     => 'B' . rand(1000, 9999),
             'ID_PESANAN'        => $id,
@@ -169,8 +222,8 @@ class KasirController extends Controller
             'STATUS_PEMBAYARAN' => 'Lunas', 
             'WAKTU_PEMBAYARAN'  => now()
         ]);
-
-        return redirect()->back()->with('success', 'SUKSES! Masuk Dapur.');
+    
+        return redirect()->back()->with('success', 'SUKSES! Masuk Antrean Dapur.');
     }
 
     public function updateStatus($id) {
@@ -184,9 +237,6 @@ class KasirController extends Controller
         return redirect()->back();
     }
 
-    // ==========================================
-    // 4. MANAJEMEN MENU (CRUD) - DIPERBAIKI!
-    // ==========================================
     public function storeMenu(Request $request) {
         $request->validate([
             'NAMA_MENU' => 'required',
@@ -243,19 +293,13 @@ class KasirController extends Controller
         return redirect()->back()->with('success', 'Menu berhasil diperbarui!');
     }
 
-    // !!! PERBAIKAN UTAMA: HAPUS PAKSA (FORCE DELETE) !!!
     public function destroyMenu($id) {
         $menu = Menu::findOrFail($id);
         
-        // 1. HAPUS FOTO
         $path = public_path('images/menu/' . $menu->FOTO);
         if (file_exists($path) && $menu->FOTO) { @unlink($path); }
 
-        // 2. HAPUS RIWAYAT DETIL PEMESANAN YANG TERKAIT (SUPAYA BISA DIHAPUS)
-        // Ini solusi untuk error Integrity constraint violation
         DB::table('detil_pemesanan')->where('ID_MENU', $id)->delete();
-
-        // 3. HAPUS MENU
         $menu->delete();
 
         return redirect()->back()->with('success', 'Menu berhasil dihapus!');
@@ -267,9 +311,6 @@ class KasirController extends Controller
         return redirect()->back();
     }
 
-    // ==========================================
-    // 5. FITUR LAINNYA & EXPORT EXCEL
-    // ==========================================
     public function storeMeja(Request $request) {
         Meja::create(['ID_MEJA' => $request->ID_MEJA, 'STATUS_MEJA' => 'Kosong']);
         return redirect()->back();
@@ -328,19 +369,14 @@ class KasirController extends Controller
         return view('kasir.struk', compact('order'));
     }
 
-    // Export Excel CSV
     public function exportExcel(Request $request) {
         $tanggal = $request->get('tanggal', date('Y-m-d'));
         $fileName = 'Laporan_RielsCoffee_' . $tanggal . '.csv';
-
-        // Fix RelationNotFoundException: hapus 'pembayaran.metode' dari with() jika relasi 'metode' tidak ada di model Pembayaran
-        // Atau pastikan di Model Pembayaran ada public function metode() { return $this->belongsTo(MetodePembayaran::class, 'ID_METODE'); }
-        // Di sini saya pakai query manual DB biar aman tanpa ubah Model
         
         $data = Pemesanan::where('STATUS_PESANAN', 'Selesai')
             ->whereHas('pembayaran', function($q) use ($tanggal) {
                 $q->whereDate('WAKTU_PEMBAYARAN', $tanggal);
-            })->with(['detail.menu', 'pembayaran']) // Hapus .metode jika error
+            })->with(['detail.menu', 'pembayaran'])
             ->orderBy('ID_PESANAN', 'desc')->get();
 
         $headers = [
@@ -366,7 +402,6 @@ class KasirController extends Controller
                 
                 $jam = $d->pembayaran ? date('H:i', strtotime($d->pembayaran->WAKTU_PEMBAYARAN)) : '-';
                 
-                // Ambil Nama Metode Manual biar aman
                 $namaMetode = 'Tunai';
                 if($d->pembayaran) {
                     $metodeData = DB::table('metode_pembayaran')->where('ID_METODE', $d->pembayaran->ID_METODE)->first();
@@ -374,13 +409,7 @@ class KasirController extends Controller
                 }
 
                 fputcsv($file, [
-                    $no++, 
-                    $jam, 
-                    '#' . $d->ID_PESANAN, 
-                    $d->ID_MEJA, 
-                    $menuString, 
-                    $d->TOTAL_BAYAR, 
-                    $namaMetode
+                    $no++, $jam, '#' . $d->ID_PESANAN, $d->ID_MEJA, $menuString, $d->TOTAL_BAYAR, $namaMetode
                 ]);
             }
             fclose($file);
@@ -388,14 +417,30 @@ class KasirController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-   
+    
     public function cetakStrukDapur($id) {
-      
         $order = \App\Models\Pemesanan::with(['detail.menu'])->findOrFail($id);
         
-       
+        if ($order->STATUS_PESANAN == 'Antre') {
+            $order->update(['STATUS_PESANAN' => 'Dimasak']);
+        }
+    
         return view('kasir.struk_dapur', compact('order'));
     }
+    
+    public function selesaikanPesanan($id_pesanan) {
+        Pemesanan::where('ID_PESANAN', $id_pesanan)->update(['STATUS_PESANAN' => 'Selesai']);
+        return redirect()->back()->with('success', 'Pesanan selesai!');
+    }
 
+    public function kirimKeDapur($id) {
+        Pemesanan::where('ID_PESANAN', $id)->update(['STATUS_PESANAN' => 'Antre']);
+        return redirect()->back()->with('success', 'Pesanan masuk antrean dapur!');
+    } 
 
+    public function cetakSemuaAntrean() {
+        $pesananAntre = \App\Models\Pemesanan::where('STATUS_PESANAN', 'Antre')->get();
+        \App\Models\Pemesanan::where('STATUS_PESANAN', 'Antre')->update(['STATUS_PESANAN' => 'Dimasak']);
+        return view('kasir.struk_semua_antrean', compact('pesananAntre'));
+    }
 }

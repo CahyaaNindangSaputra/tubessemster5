@@ -14,4 +14,8 @@ class Meja extends Model
 
     
     protected $fillable = ['ID_MEJA', 'QR_MENU'];
+    // Di dalam class Pemesanan
+public function meja() {
+    return $this->belongsTo(Meja::class, 'id_meja'); // Sesuaikan dengan nama kolom foreign key Anda
+}
 }

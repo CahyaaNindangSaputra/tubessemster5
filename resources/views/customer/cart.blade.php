@@ -19,7 +19,8 @@
     <div class="container" style="max-width: 500px;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold mb-0"><i class="bi bi-cart-check-fill text-primary me-2"></i>Keranjang</h4>
-            <span class="badge bg-secondary rounded-pill">Meja {{ session('customer_meja') }}</span>
+            <!-- Menggunakan variabel $nomorMeja agar spesifik sesuai tab yang aktif -->
+            <span class="badge bg-secondary rounded-pill">Meja {{ $nomorMeja ?? session('customer_meja') }}</span>
         </div>
 
         @if(session('cart') && count(session('cart')) > 0)
@@ -68,6 +69,9 @@
 
             <form action="{{ route('customer.checkout') }}" method="POST">
                 @csrf
+                <!-- Menyertakan input hidden nomor meja agar saat checkout tidak salah sasaran -->
+                <input type="hidden" name="meja" value="{{ $nomorMeja ?? session('customer_meja') }}">
+                
                 <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-3 shadow-lg mb-3">
                     Lanjut Pembayaran <i class="bi bi-arrow-right-circle ms-2"></i>
                 </button>
@@ -78,13 +82,14 @@
                 <i class="bi bi-cart-x fs-1 text-muted opacity-50"></i>
                 <h5 class="fw-bold mt-3 text-muted">Keranjang Kosong</h5>
                 <p class="small text-muted mb-4">Yuk pesan sesuatu yang enak!</p>
-                <a href="{{ route('customer.menu') }}" class="btn btn-primary rounded-pill px-4 fw-bold">Lihat Menu</a>
+                <a href="{{ route('customer.menu', ['meja' => $nomorMeja ?? session('customer_meja')]) }}" class="btn btn-primary rounded-pill px-4 fw-bold">Lihat Menu</a>
             </div>
         @endif
 
         @if(session('cart') && count(session('cart')) > 0)
             <div class="text-center">
-                <a href="{{ route('customer.menu') }}" class="text-decoration-none text-muted small fw-bold">
+                <!-- Link kembali ke menu dengan membawa parameter meja aktif -->
+                <a href="{{ route('customer.menu', ['meja' => $nomorMeja ?? session('customer_meja')]) }}" class="text-decoration-none text-muted small fw-bold">
                     <i class="bi bi-plus-circle me-1"></i> Tambah Menu Lain
                 </a>
             </div>
