@@ -78,9 +78,9 @@
                 <button class="nav-link active" id="nav-pos-tab" data-bs-toggle="pill" data-bs-target="#nav-pos" type="button">
                     <i class="bi bi-grid-1x2-fill me-2"></i> Monitor Pesanan
                 </button>
-                <button class="nav-link" id="nav-menu-tab" data-bs-toggle="pill" data-bs-target="#nav-menu" type="button">
+            {{--     <button class="nav-link" id="nav-menu-tab" data-bs-toggle="pill" data-bs-target="#nav-menu" type="button">
                     <i class="bi bi-cup-hot-fill me-2"></i> Kelola Menu
-                </button>
+                </button> --}}
             </div>
         </div>
         <div class="text-center text-muted small pb-2">
@@ -420,7 +420,7 @@
                     .catch(err => console.log('Update real-time gagal:', err));
             }
             
-            setInterval(loadDashboardData, 10000);
+            setInterval(loadDashboardData, 80000);
 
             function updateTimers() {
                 document.querySelectorAll('.timer-badge').forEach(function (badge) {

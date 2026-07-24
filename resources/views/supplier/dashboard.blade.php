@@ -431,9 +431,9 @@
                                             </td>
                                             <td><small class="text-muted">{{ $b->tanggal_masuk ?? '-' }}</small></td>
                                             <td class="text-end">
-                                                <button class="btn btn-sm btn-light border rounded-circle shadow-sm me-1 text-success" title="Restock Stok" data-bs-toggle="modal" data-bs-target="#restockModal{{ $b->id_bahan }}" style="width: 32px; height: 32px;">
+                                               {{--  <button class="btn btn-sm btn-light border rounded-circle shadow-sm me-1 text-success" title="Restock Stok" data-bs-toggle="modal" data-bs-target="#restockModal{{ $b->id_bahan }}" style="width: 32px; height: 32px;">
                                                     <i class="bi bi-plus-lg"></i>
-                                                </button>
+                                                </button> --}}
 
                                                 <form action="{{ route('supplier.destroyBahan', $b->id_bahan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus bahan ini?')">
                                                     @csrf
